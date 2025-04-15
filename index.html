@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Профиль</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="icon.png" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            overflow: hidden;
+            overflow-y: auto; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            color: white;
+            background: #000;
+        }
+
+        #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        #video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .profile-card {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            width: calc(100% - 40px);
+            max-width: 600px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5),
+                        0 0 40px rgba(0, 255, 255, 0.3),
+                        0 0 80px rgba(0, 255, 255, 0.2);
+            border: 2px solid rgba(0, 255, 255, 0.5);
+            animation: neonGlow 2s infinite alternate;
+            margin: 20px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            max-height: 90vh;   
+            overflow-y: auto;     
+             margin: 20px auto;   
+        }
+
+        .profile-card::-webkit-scrollbar {
+             width: 8px; 
+        }
+
+        .profile-card::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2); 
+            border-radius: 4px;
+        }
+
+        .profile-card::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 255, 0.5); 
+            border-radius: 4px;
+            border: 1px solid rgba(0, 255, 255, 0.7);
+        }
+
+        .profile-card::-webkit-scrollbar-thumb:hover {
+             background: rgba(0, 255, 255, 0.7); 
+             box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+
+        .profile-card {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 255, 255, 0.5) rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-card {
+           transition: scrollbar-color 0.3s ease;
+        }
+
+        @keyframes neonGlow {
+            from {
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.5),
+                            0 0 40px rgba(0, 255, 255, 0.3),
+                            0 0 80px rgba(0, 255, 255, 0.2);
+                border-color: rgba(0, 255, 255, 0.5);
+            }
+            to {
+                box-shadow: 0 0 30px rgba(0, 255, 255, 0.7),
+                            0 0 60px rgba(0, 255, 255, 0.5),
+                            0 0 120px rgba(0, 255, 255, 0.3);
+                border-color: rgba(0, 255, 255, 0.8);
+            }
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(0, 255, 255, 0.7);
+            margin: 0 auto 15px;
+            display: block;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            word-break: break-word;
+        }
+
+        .bio {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            text-align: left;
+            overflow-wrap: break-word;
+        }
+
+        .bio code, .bio a {
+            word-break: break-all;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.2);
+            color: white;
+            font-size: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 255, 255, 0.5);
+        }
+
+        .social-btn:hover {
+            background: rgba(0, 255, 255, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+        }
+
+        .visitor-counter {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            font-size: 14px;
+        }
+
+        .counter-icon {
+            margin-right: 8px;
+            color: cyan;
+        }
+
+        .counter-number {
+            font-weight: bold;
+            color: white;
+        }
+
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .modal-content {
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            width: calc(100% - 40px);
+            max-width: 500px;
+            position: relative;
+            border: 2px solid rgba(0, 255, 255, 0.5);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            margin: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            opacity: 1;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 22px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            z-index: 1;
+        }
+
+        .close-btn:hover {
+            color: cyan;
+        }
+
+        .modal-title {
+            margin-bottom: 15px;
+            text-align: center;
+            color: cyan;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
+        }
+
+        .modal-text {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border-radius: 50px;
+            background: rgba(0, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+        }
+
+        .action-btn i {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 255, 255, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes rotateIn {
+            from { transform: rotate(-10deg) scale(0.8); opacity: 0; }
+            to { transform: rotate(0) scale(1); opacity: 1; }
+        }
+
+        .modal.slide .modal-content {
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        .modal.fade .modal-content {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .modal.rotate .modal-content {
+            animation: rotateIn 0.5s ease forwards;
+        }
+
+        .modal.closing .modal-content {
+            animation: fadeIn 0.3s ease reverse forwards;
+        }
+
+        @supports (-webkit-touch-callout: none) {
+            body {
+                min-height: -webkit-fill-available;
+            }
+            
+            #video-container {
+                height: -webkit-fill-available;
+            }
+        }
+
+        /* Фикс для Samsung Internet */
+        @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+            #video-bg {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        @-moz-document url-prefix() {
+            .profile-card {
+                background: rgba(0, 0, 0, 0.85);
+            }
+        }
+
+        @media (max-width: 400px) {
+            .profile-card {
+                padding: 15px;
+            }
+            
+            .avatar {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .social-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+            
+            .action-btn {
+                min-width: 100px;
+                padding: 6px 12px;
+            }
+            
+            .visitor-counter {
+                bottom: 10px;
+                right: 10px;
+                padding: 6px 12px;
+            }
+        }
+
+        @media (orientation: portrait) and (max-height: 700px) {
+            .profile-card {
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+        }
+
+        @media (orientation: landscape) and (max-height: 500px) {
+            .profile-card {
+                max-height: 90vh;
+                overflow-y: auto;
+                padding: 15px;
+            }
+            
+            .avatar {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 10px;
+            }
+            
+            h1 {
+                font-size: 1.2rem;
+                margin-bottom: 5px;
+            }
+            
+            .bio {
+                font-size: 0.8rem;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <video autoplay muted loop id="video-bg" playsinline>
+        <source src="video1.mp4" type="video/mp4" id="video-source">
+    </video>
+    
+    <div class="profile-card">
+        <img src="photo.jpg" alt="Моя аватарка" class="avatar">
+        <h1>ᴧᴇᴧиᴋ</h1>
+        <div class="bio" style="white-space: pre-wrap; text-align: left;">
+            ⚠️Прочтите, перед тем как написать мне. 
+
+1. ‼️Прочтите, перед тем как писать, и будьте грамотнее- <a href="http://neprivet.t.me/">neprivet.t.me</a>
+
+•2. ‼️За оскорбления или же угрозы- могу отменить заказ без возврата средств.
+
+•3. ‼️Не по делу-игнор. Формулируйте вопросы заранее (перед диалогом).
+
+•4. ‼️Писать без денег мне не нужно, мета вопросы тоже идут в игнор <a href="http://neprivet.t.me/">neprivet.t.me</a>.
+
+•5. ‼️Сроки выполнения от 1 до 10 дней. Зависит от товара.
+
+•6. ‼️Работаю по схеме- 100% предоплата-->Выполнение вашего заказа.
+
+•7. ‼️Бесплатно я ничего не делаю. 
+
+•8. ‼️Оскорбления/Угрозы/спам - в чс | игнор. 
+
+•9. ‼️Реклама своей продукции мне в ответах/личку - Игнор | чс. 
+
+•10. ‼️Из чс вынимаю спустя время, по этому поводу мозги мне не чешите.
+
+
+
+⚠️Basic knowledge before writing to me. 
+
+•1. ‼️Read before you write, and be more literate - <a href="http://neprivet.t.me/">neprivet.t.me</a>
+
+•2. ‼️For Insults or threats, I can cancel the order without a refund.
+
+•3. ‼️Not on business- ignore. Formulate questions earlier, before the dialogue.
+
+•4.‼️ Don't need to write without money, meta questions are also ignored.
+
+•5.‼️ Is lead time is from 1 to 10 days, depending on the product.
+
+•6. ‼️I work according the scheme - 100% prepayment—> The fulfillment of your order.
+
+•7. ‼️Don't do anything for free.
+
+•8.‼️ Insults / threats / spam- emergency | ignore.
+
+•9. ‼️Advertising your products to me on person- ignore / emergency. 
+
+•10.‼️ I take it out of emergency after a while, don't scratch my brain about it.            
+        </div>       
+
+
+    <div class="visitor-counter">
+        <span class="counter-icon">👁️</span>
+        <span class="counter-number" id="visitor-count">0</span>
+    </div>
+
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal1')">&times;</span>
+            <h2 class="modal-title">Мои Банки</h2>
+            <div class="modal-text">
+                <p>я имею всего 3 доступа оплаты:</p>
+                <ul>
+                    <li>KASPI: <code>4400430368612484</code></li>
+                    <li>YouMoney: <code>5599002070934957</code></li>
+                    <li>CryptoBot: <i>по кнопке с лого USDT</i></li>
+                </ul>
+                <p>остальные фейки.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal2" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal2')">&times;</span>
+            <h2 class="modal-title">Актив</h2>
+            <div class="modal-text">
+                <ul>
+                    <li>Active: 7–8 hours on weekdays / 3–4 hours on holidays </li>
+                    <li>Иногда бывают исключение</li>
+                    <li>если я общаюсь не значит что я активный и работаю.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal3" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal3')">&times;</span>
+            <h2 class="modal-title">Связь</h2>
+            <div class="modal-text">
+                <p>связаться можно со мной разными способами</p>
+                <p>ну вот основные решения:</p>
+                <ul>
+                    <li>Кнопка с лого Ватсап(если хотите написать на ватсап)</li>
+                    <li>Кнопка с лого Телеграмм(если хотите написать через Телеграмм)</li>
+                    <li>Оригинальный айди - 615061902</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkDevice() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const video = document.getElementById('video-bg');
+            const source = document.getElementById('video-source');
+    
+            if (isMobile) {
+                source.src = "video.mp4";
+            } else {
+                source.src = "video1.mp4";
+            }
+    
+            video.load(); 
+        }
+    
+        function updateVisitorCounter() {
+            let count = localStorage.getItem('visitorCount');
+            count = count ? parseInt(count) + 1 : 1;
+            localStorage.setItem('visitorCount', count);
+            document.getElementById('visitor-count').textContent = count;
+        }
+
+        function openModal(modalId, animationType) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'flex';
+            modal.classList.add(animationType);
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 10);
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('closing');
+            modal.classList.remove('active');
+            
+            setTimeout(() => {
+                modal.classList.remove('closing');
+                modal.style.display = 'none';
+                modal.classList.remove('slide', 'fade', 'rotate');
+            }, 300);
+        }
+    
+        window.onload = function () {
+            checkDevice();
+            updateVisitorCounter();
+
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal(this.id);
+                    }
+                });
+            });
+        };
+    </script>
+</body>
+</html>
